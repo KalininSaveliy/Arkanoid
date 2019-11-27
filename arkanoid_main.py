@@ -1,8 +1,9 @@
 """Главный модуль"""
 
 import tkinter
+from arkanoid_level import *
 from arkanoid_block import *
-from arkanoid_ball import *
+# from arkanoid_ball import *
 from arkanoid_platform import *
 
 
@@ -23,6 +24,9 @@ def new_game(event):
     text_score = canvas.create_text(window_width/20, window_height/24,
                                     text='Score: ' + str(score), fill='white')
     platform = Platform(canvas, window_width, window_height)
+
+    # создание чек-уровня, в переменную blocks записываються данные о блоках
+    blocks = create_check_level(canvas, window_width, window_height)
     root.bind('<Key>', platform.move_platform)
 
 
