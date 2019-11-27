@@ -36,7 +36,7 @@ class Platform:
                                             self.x + self.length / 2, self.y + self.thickness / 2,
                                             fill=self.color)]
 
-    def platform_centre(self):
+    def centre(self):
         """Выводит координаты в формате: х центра платформы и у его верхней грани"""
         return self.x, self.y - self.thickness, self.length
 
