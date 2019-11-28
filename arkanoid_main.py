@@ -1,9 +1,10 @@
 """Главный модуль"""
 
 import tkinter
+import time
 from arkanoid_level import *
 from arkanoid_block import *
-# from arkanoid_ball import *
+from arkanoid_ball import *
 from arkanoid_platform import *
 
 
@@ -20,11 +21,20 @@ def main():
 
 
 def new_game(event):
+    global  ball, platform, blocks
     score = 0
     text_score = canvas.create_text(window_width/20, window_height/24,
                                     text='Score: ' + str(score), fill='white')
     platform = Platform(canvas, window_width, window_height)
+    ball = Ball(canvas, platform.x, platform.y - 5, 5, window_width, window_height)
+    
+    blocks = []
 
+    while True:
+        ball.move(blocks, platform)
+        canvas.update()
+        time.sleep(0.03)
+        
     # создание чек-уровня, в переменную blocks записываються данные о блоках
     blocks = create_check_level(canvas, window_width, window_height)
     root.bind('<Key>', platform.move_platform)
