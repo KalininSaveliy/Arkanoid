@@ -1,6 +1,7 @@
 """Главный модуль"""
 
 import tkinter
+import time
 from arkanoid_level import *
 from arkanoid_block import *
 from arkanoid_ball import *

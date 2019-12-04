@@ -17,4 +17,4 @@ def create_check_level(canvas, window_width, window_height):
 
 
 if __name__ == '__main__':
-    print('This module not for direct call')
+    print('This module is not for direct call')
