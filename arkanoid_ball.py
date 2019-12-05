@@ -5,15 +5,15 @@ colors = ['red','orange','yellow','green','blue']
 
 class Ball:
     
-    def __init__(self, canv, x, y, r, width, height):
-        self.width = width
-        self.height = height
+    def __init__(self, canvas, x, y, r, window_width, window_height):
+        self.width = window_width
+        self.height = window_height
 
-        self.canv = canv
+        self.c = canvas
 
-        self.r     = r
-        self.x     = x
-        self.y     = y
+        self.r = r
+        self.x = x
+        self.y = y
 
         self.dx    = randint(-10,10)
         self.dy    = (v**2-self.dx**2)**0.5
@@ -26,7 +26,13 @@ class Ball:
     # change color func
 
     "Функция, отвечающая за движение шарика"
-    
+
+    def check_collision_x(self, obj):
+        return obj.x - self.r <= self.x + self.dx and self.x + self.dx <= obj.x + obj.w + self.r
+
+    def check_collision_y(self, obj):
+        return obj.y - self.r <= self.y + self.dy and self.y + self.dy <= obj.y + obj.h + self.r
+
     def move(self, blocks, platform):
 
         def lengthhh(x, y):
