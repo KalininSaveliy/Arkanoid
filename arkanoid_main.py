@@ -65,30 +65,41 @@ class Game():
         self.root.mainloop()
 
     def gamecycle(self):
-        # is_x_detected = False
-        # is_y_detected = False
+        is_x_detected = False
+        is_y_detected = False
 
-        # # check blocks collisions
-        # for b in self.blocks
+        # check blocks collisions
+        for b in self.blocks
 
-        #     if self.ball.check_collision_x(b):
-        #         is_x_detected = True
+            if self.ball.check_collision_x(b):
+                is_x_detected = True
 
-        #     if self.ball.check_collision_y(b):
-        #         is_y_detected = True
+            if self.ball.check_collision_y(b):
+                is_y_detected = True
 
-        #     if is_x_detected and is_y_detected:
-        #         break
+            if is_x_detected and is_y_detected:
+                break
 
-        # # platform check
-        # if self.ball.check_collision_x(self.platform)
-        #     is_x_detected = True
+        # platform check
+        if self.ball.check_collision_x(self.platform)
+            is_x_detected = True
 
-        # if self.ball.check_collision_y(self.platform)
-        #     is_y_detected = True
+        if self.ball.check_collision_y(self.platform)
+            is_y_detected = True
 
-        
+        # playground boundaries check
 
+        if self.ball.check_boundaries_x(self.width):
+            is_x_detected = True
+
+        if self.ball.check_boundaries_y(self.height):
+            is_y_detected = True
+
+        if is_x_detected:
+            self.ball.dx *= -1
+
+        if is_y_detected:
+            self.ball.dy *= -1
 
         self.root.after(50, self.gamecycle)
 
