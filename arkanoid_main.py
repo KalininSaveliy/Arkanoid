@@ -68,63 +68,63 @@ class Game():
     # #write test collision
 
     def gamecycle(self):
-        is_x_detected = False
-        is_y_detected = False
+        # is_x_detected = False
+        # is_y_detected = False
 
-        # check blocks collisions
-        for b in self.blocks:
+        # # check blocks collisions
+        # for b in self.blocks:
 
-            class block_wrap:
-                x = b.x
-                y = b.y
-                w = b.length
-                h = b.thickness
+        #     class block_wrap:
+        #         x = b.x
+        #         y = b.y
+        #         w = b.length
+        #         h = b.thickness
 
-            x_check =
+        #     x_check =
 
-            if self.ball.check_collision_x(block_wrap):
-                is_x_detected = True
+        #     if self.ball.check_collision_x(block_wrap):
+        #         is_x_detected = True
 
-            if self.ball.check_collision_y(block_wrap):
-                is_y_detected = True
+        #     if self.ball.check_collision_y(block_wrap):
+        #         is_y_detected = True
 
-            if is_x_detected and is_y_detected:
-                break
+        #     if is_x_detected and is_y_detected:
+        #         break
 
-        if is_x_detected:
-            print("x block collision")
+        # if is_x_detected:
+        #     print("x block collision")
 
-        if is_y_detected:
-            print("y block collision")
+        # if is_y_detected:
+        #     print("y block collision")
 
-        class platform_wrap:
-            x = self.platform.x - self.platform.length / 2
-            y = self.platform.y - self.platform.thickness / 2
-            w = self.platform.length
-            h = self.platform.thickness
+        # class platform_wrap:
+        #     x = self.platform.x - self.platform.length / 2
+        #     y = self.platform.y - self.platform.thickness / 2
+        #     w = self.platform.length
+        #     h = self.platform.thickness
 
-        # platform check
-        if self.ball.check_collision_x(platform_wrap):
-            is_x_detected = True
+        # # platform check
+        # if self.ball.check_collision_x(platform_wrap):
+        #     is_x_detected = True
 
-        if self.ball.check_collision_y(platform_wrap):
-            is_y_detected = True
+        # if self.ball.check_collision_y(platform_wrap):
+        #     is_y_detected = True
 
-        # playground boundaries check
+        # # playground boundaries check
 
-        if self.ball.check_boundaries_x(self.width):
-            is_x_detected = True
+        # if self.ball.check_boundaries_x(self.width):
+        #     is_x_detected = True
 
-        if self.ball.check_boundaries_y(self.height):
-            is_y_detected = True
+        # if self.ball.check_boundaries_y(self.height):
+        #     is_y_detected = True
 
-        if is_x_detected:
-            self.ball.dx *= -1
+        # if is_x_detected:
+        #     self.ball.dx *= -1
 
-        if is_y_detected:
-            self.ball.dy *= -1
+        # if is_y_detected:
+        #     self.ball.dy *= -1
 
-        self.ball.move()
+        # self.ball.move()
 
         self.root.after(50, self.gamecycle)
 
@@ -138,7 +138,7 @@ class Game():
     def start_new_game(self, event):
         self.platform = Platform(self.canvas, self.width, self.height)
         self.blocks = create_check_level(self.canvas, self.width, self.height)
-        self.ball = Ball(self.canvas, self.platform.x , self.platform.y - 10, 10, 10)
+        #self.ball = Ball(self.canvas, self.platform.x , self.platform.y - 10, 10, 10)
         self.root.bind('<Key>', self.platform.move_platform)
         self.show_score()
         self.gamecycle()
