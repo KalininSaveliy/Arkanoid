@@ -13,8 +13,9 @@ class Ball:
         self.r = r
 
 
-        self.dx    = randint(-max_speed, max_speed)
+        self.dx    = randint(1, max_speed * 100 - 1 ) / 100
         self.dy    = - (max_speed ** 2 - self.dx ** 2) ** 0.5
+        self.v = (self.dx ** 2 + self.dy ** 2) ** 0.5
 
         # canvas drawing
         self.ball  = canvas.create_oval(self.x - self.r, self.y - self.r, self.x + self.r, self.y + self.r)

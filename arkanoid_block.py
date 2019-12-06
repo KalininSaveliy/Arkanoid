@@ -29,11 +29,16 @@ class Block:
 
     def hit(self):
         """Уменьшает количество жизней и меняет цвет блока"""
+        # возвращает boolean -  нужно ли блок удалить с уровня
         self.life_points -= 1
         if self.life_points == 0:
             self.canvas.delete(self.block)
-        else:
-            self.block.coords(fill=self.dict[self.life_points])
+            return True
+        # возвращает boolean -  нужно ли блок удалить с уровня
+        # FIXME: не работает
+        #else:
+        #    self.canvas.coords(self.block, fill=self.dict[self.life_points])
+        #    return False
 
     def his_place(self):
         """Выводит координаты блока в формате х, у верхнего левого угла, х, у нижнего правого угла"""

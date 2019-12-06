@@ -42,6 +42,8 @@ from arkanoid_platform import *
 #     blocks = create_check_level(canvas, window_width, window_height)
 #     root.bind('<Key>', platform.move_platform)
 
+# debug_lines = []
+
 class Game():
     def __init__(self, tk, width, height):
         self.tk = tk
@@ -55,18 +57,26 @@ class Game():
         self.background_color = "black"
         self.score_color = "white"
 
+        # collision
+        self.last_x = 0
+        self.last_y = 0
+        self.saved_x = -1000
+        self.saved_y = -1000
+
         # score
         self.score = 0
         self.score_element = self.canvas.create_text(self.width / 20, self.height / 24, text = "Score: " + str(self.score), fill = "black")
-
-        self.debug_line = self.canvas.create_line(0,0,1,1)  
 
         # draw start screen
         self.root.bind("<Double-Button-1>", self.start_new_game)
         self.root.mainloop()
 
+
+
     # b->r - ray, f-s - segment
     def is_cross(self, bx, by, rx, ry, fx, fy, sx, sy):
+        # self.canvas.create_line(fx, fy, sx, sy, fill="#00ffff")
+        # self.canvas.create_line(bx, by, rx, ry, fill="#ff8800")
         def vec2(bx, by, x, y):
             return [x - bx, y - by]
 
@@ -91,125 +101,96 @@ class Game():
             if dist(vec2(ray[0], ray[1], first[0], first[1])) <  dist(vec2(ray[0], ray[1], second[0], second[1])):
                 self.last_x = fx
                 self.last_y = fy
-                return true
-            else
+                return True
+            else:
                 self.last_x = sx
                 self.last_y = sy
-                return true
+                return True
 
         if area > 0 and first_area > 0 and second_area > 0 or area < 0 and first_area < 0 and second_area < 0:
             self.last_x = bx + ray[0] * area / (first_area + second_area)
             self.last_y = by + ray[1] * area / (first_area + second_area)
-            return true
+            return True
 
-        return false
+        return False
 
     def gamecycle(self):
+        # global debug_lines
+        # for l in debug_lines:
+        #     (self.canvas).delete(l)
 
-        self.r = math.inf
-        self.x1 = 0
-        self.y1 = 0
-        self.x2 = 0
-        self.y2 = 0
+        self.saved_x = -1000
+        self.saved_y = -1000
+
+        def process_line(x1, y1, x2, y2):
+            if self.is_cross(self.ball.x, self.ball.y, self.ball.x + self.ball.dx, self.ball.y + self.ball.dy, x1, y1, x2, y2):
+                if (self.saved_x - self.ball.x) ** 2 + (self.saved_y - self.ball.y) ** 2 > (self.last_x - self.ball.x) ** 2 + (self.last_y - self.ball.y) ** 2:
+                    self.saved_x = self.last_x
+                    self.saved_y = self.last_y
+                    self.was_block = self.now_blocks
+                    self.update_block = self.now_blocks
+                    # line_length = 3
+                    # debug_lines.append(self.canvas.create_line(self.saved_x - line_length, self.saved_y - line_length, self.saved_x + line_length, self.saved_y + line_length, fill="white"))
+                    # debug_lines.append(self.canvas.create_line(self.saved_x - line_length, self.saved_y + line_length, self.saved_x + line_length, self.saved_y - line_length, fill="white"))
+                    # debug_lines.append(self.canvas.create_line(self.ball.x, self.ball.y, self.saved_x, self.saved_y, fill="#338866"))
+
+                    # save segment
+                    self.segment_x1 = x1
+                    self.segment_x2 = x2
 
         def process_rect(x, y, w, h):
-            # global r, x1, x2, y1, y2 # wtf didn't work but must. just trying to access gamecycle variables ...
-
-            def process_line(x1, y1, x2, y2):
-
-                ndist = self.dist_if_collide(self.ball.x, self.ball.y, self.ball.dx, self.ball.dy, x1, y1, x2, y2)
-                if self.r > ndist:
-                    self.x1 = x1
-                    self.y1 = y1
-                    self.x2 = x2
-                    self.y2 = y2
-                    self.r = ndist
-
             process_line(x, y, x+w, y)
             process_line(x, y, x, y+h)
-            process_line(x+w, y+h, x+w, y)
             process_line(x+w, y+h, x, y+h)
-            # def process_line(x, y, w, h)
-            # ndist = self.dist_if_collide(self.ball.x, self.ball.y, self.ball.dx, self.ball.dy, x - self.ball.r, y - self.ball.r, x + w + self.ball.r, y - self.ball.r)
-            # if self.r > ndist:
-            #     self.x1 = x - self.ball.r
-            #     self.y1 = y - self.ball.r
-            #     self.x2 = x + w + self.ball.r
-            #     self.y2 = y - self.ball.r
-            #     self.r = ndist
+            process_line(x+w, y+h, x+w, y)
 
-            # # process_line(x - self.ball.r / 2, y - self.ball.r / 2, x + w + self.ball.r / 2, y - self.ball.r / 2)
-            # # process_line(x - self.ball.r / 2, y - self.ball.r / 2, x - self.ball.r / 2, y + h + self.ball.r / 2)
-            # # process_line(x + w + self.ball.r / 2, y + h + self.ball.r / 2, x + w + self.ball.r / 2, y - self.ball.r / 2)
-            # # process_line(x + w + self.ball.r / 2, y + h + self.ball.r / 2, x - self.ball.r / 2, y + h + self.ball.r / 2)
-
-            # ndist = self.dist_if_collide(self.ball.x, self.ball.y, self.ball.dx, self.ball.dy, x - self.ball.r, y - self.ball.r, x - self.ball.r, y + h + self.ball.r)
-            # if self.r > ndist:
-            #     self.x1 = x - self.ball.r
-            #     self.y1 = y - self.ball.r
-            #     self.x2 = x - self.ball.r
-            #     self.y2 = y + h + self.ball.r
-            #     self.r = ndist
-
-            # ndist = self.dist_if_collide(self.ball.x, self.ball.y, self.ball.dx, self.ball.dy, x + w + self.ball.r, y + h + self.ball.r, x + w + self.ball.r, y - self.ball.r)
-            # if self.r > ndist:
-            #     self.x1 = x + w + self.ball.r
-            #     self.y1 = y + h + self.ball.r
-            #     self.x2 = x + w + self.ball.r
-            #     self.y2 = y - self.ball.r
-            #     self.r = ndist
-
-            # ndist = self.dist_if_collide(self.ball.x, self.ball.y, self.ball.dx, self.ball.dy, x + w + self.ball.r, y + h + self.ball.r, x - self.ball.r, y + h + self.ball.r)
-            # if self.r > ndist:
-            #     self.x1 = x + w + self.ball.r
-            #     self.y1 = y + h + self.ball.r
-            #     self.x2 = x - self.ball.r
-            #     self.y2 = y + h + self.ball.r
-            #     self.r = ndist
-
-
+        self.now_blocks = True
+        self.was_block = False
         # # check blocks collisions
         for b in self.blocks:
             process_rect(b.x, b.y, b.length, b.thickness)
+            if self.was_block and self.update_block:
+              self.last_block = b
+              self.update_block = False
 
+        self.now_blocks = False
         # platform collision check
         process_rect(self.platform.x - self.platform.length / 2, self.platform.y - self.platform.thickness / 2, self.platform.length, self.platform.thickness)
 
         # boundaries check
         process_rect(0, 0, self.width, self.height)
 
-        print(self.ball.x, self.ball.y, self.ball.dx, self.ball.dy, 1/self.r)
-        self.canvas.create_line(self.x1, self.y1, self.x2, self.y2, fill="white")
-        
-        if self.r > 1:
-            oldx = self.ball.x
-            oldy = self.ball.y
 
-            if self.y2 - self.y1 == 0: # cross [1, 0], [x2-x1, y2-y1]
-                self.ball.x += self.ball.dx
-                self.ball.y += 1 / self.r * self.ball.dy - (1 - 1/self.r) * self.ball.dy
+
+        dist = ((self.saved_x - self.ball.x) ** 2 + (self.saved_y - self.ball.y) ** 2)
+
+
+        if dist < self.ball.v ** 2:
+            if self.saved_y > self.height-1:
+                self.on_floor_hit()
+                return
+            if self.segment_x2 - self.segment_x1 != 0:
                 self.ball.dy *= -1
             else:
-                self.ball.y += self.ball.dy
-                self.ball.x += 1 / self.r * self.ball.dx - (1 - 1/self.r) * self.ball.dx
                 self.ball.dx *= -1
-            self.canvas.move(self.ball, self.ball.x - oldx, self.ball.x - oldy)
-        else:
-            self.ball.x += self.ball.dx
-            self.ball.y += self.ball.dy
-            self.canvas.move(self.ball.ball, self.ball.dx, self.ball.dy)
+            if self.was_block:
+                self.last_block.hit()
 
-        self.debug_line = self.canvas.create_line(self.ball.x, self.ball.y, self.ball.x + self.ball.dx, self.ball.y + self.ball.dy, fill="#00ff00")
+        self.ball.move()
+        # debug_lines.append(self.canvas.create_line(self.ball.x, self.ball.y, self.ball.x + self.ball.dx, self.ball.y + self.ball.dy, fill="#fff000"))
 
 
 
-        self.root.after(250, self.gamecycle)
+        self.root.after(16, self.gamecycle)
 
     def hide_score(self):
         self.canvas.itemconfig(self.score_element, fill = self.background_color)
 
     def show_score(self):
         self.canvas.itemconfig(self.score_element, fill = self.score_color)
+
+    def on_floor_hit(self):
+        pass
 
     # we need to define level reference system
     def start_new_game(self, event):
