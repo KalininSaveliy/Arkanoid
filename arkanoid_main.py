@@ -64,8 +64,8 @@ class Game():
         self.saved_y = -1000
 
         # score
-        self.score = 0
-        self.score_element = self.canvas.create_text(self.width / 20, self.height / 24, text = "Score: " + str(self.score), fill = "black")
+        self.current_score = 0
+        self.score_element = self.canvas.create_text(self.width / 20, self.height / 24, text = "Score: " + str(self.current_score), fill = "black")
 
         # draw start screen
         self.root.bind("<Double-Button-1>", self.start_new_game)
@@ -147,8 +147,8 @@ class Game():
         self.now_blocks = True
         self.was_block = False
         # # check blocks collisions
-        for b in self.blocks:
-            process_rect(b.x, b.y, b.length, b.thickness)
+        for b in range(len(self.blocks)):
+            process_rect(self.blocks[b].x, self.blocks[b].y, self.blocks[b].length, self.blocks[b].thickness)
             if self.was_block and self.update_block:
               self.last_block = b
               self.update_block = False
@@ -167,14 +167,15 @@ class Game():
 
         if dist < self.ball.v ** 2:
             if self.saved_y > self.height-1:
-                self.on_floor_hit()
-                return
+                if self.on_floor_hit():
+                    return
             if self.segment_x2 - self.segment_x1 != 0:
                 self.ball.dy *= -1
             else:
                 self.ball.dx *= -1
             if self.was_block:
-                self.last_block.hit()
+                self.on_block_hit(self.last_block)
+
 
         self.ball.move()
         # debug_lines.append(self.canvas.create_line(self.ball.x, self.ball.y, self.ball.x + self.ball.dx, self.ball.y + self.ball.dy, fill="#fff000"))
@@ -187,10 +188,16 @@ class Game():
         self.canvas.itemconfig(self.score_element, fill = self.background_color)
 
     def show_score(self):
-        self.canvas.itemconfig(self.score_element, fill = self.score_color)
+        self.canvas.itemconfig(self.score_element, fill = self.score_color, text="Score: " + str(self.current_score))
 
     def on_floor_hit(self):
-        pass
+        return False
+
+    def on_block_hit(self, block):
+        self.current_score += 1
+        self.show_score()
+        if self.blocks[block].hit():
+            del self.blocks[block]
 
     # we need to define level reference system
     def start_new_game(self, event):
