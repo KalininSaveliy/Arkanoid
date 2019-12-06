@@ -65,8 +65,8 @@ class Game():
         self.root.bind("<Double-Button-1>", self.start_new_game)
         self.root.mainloop()
 
-
-    def dist_if_collide(self, bx, by, rx, ry, fx, fy, sx, sy):
+    # b->r - ray, f-s - segment
+    def is_cross(self, bx, by, rx, ry, fx, fy, sx, sy):
         def vec2(bx, by, x, y):
             return [x - bx, y - by]
 
@@ -87,20 +87,22 @@ class Game():
         do_calc_dist = False
 
         # проверяем пересечение
-        if area > 0:
-            if first_area > 0 and second_area > 0:
-                do_calc_dist = True
-        elif area < 0:
-            if first_area < 0 and second_area < 0:
-                do_calc_dist = True
-        elif first_area == 0:
-                return min(dist(vec2(ray[0], ray[1], first[0], first[1])), dist(vec2(ray[0], ray[1], second[0], second[1])))
+        if area == 0 and first_area == 0:
+            if dist(vec2(ray[0], ray[1], first[0], first[1])) <  dist(vec2(ray[0], ray[1], second[0], second[1])):
+                self.last_x = fx
+                self.last_y = fy
+                return true
+            else
+                self.last_x = sx
+                self.last_y = sy
+                return true
 
-        if do_calc_dist:
-            return area / (first_area + second_area)
-            self.canvas.create_line(x1, y1, x2, y2, fill="orange")
-        else:
-            return math.inf
+        if area > 0 and first_area > 0 and second_area > 0 or area < 0 and first_area < 0 and second_area < 0:
+            self.last_x = bx + ray[0] * area / (first_area + second_area)
+            self.last_y = by + ray[1] * area / (first_area + second_area)
+            return true
+
+        return false
 
     def gamecycle(self):
 
