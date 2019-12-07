@@ -38,7 +38,7 @@ class Platform:
 
     def centre(self):
         """Выводит координаты в формате: х центра платформы и у его верхней грани"""
-        return self.x, self.y - self.thickness, self.length
+        return self.x, self.y - self.thickness, self.length + self.thickness
 
     def move_platform(self, event):
         """Передвижение платформы при нажатии клавиш"""
