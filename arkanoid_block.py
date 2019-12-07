@@ -28,17 +28,17 @@ class Block:
                                                   self.y + self.thickness, fill=color)
 
     def hit(self):
-        """Уменьшает количество жизней и меняет цвет блока"""
-        # возвращает boolean -  нужно ли блок удалить с уровня
+        """Уменьшает количество жизней, меняет цвет блока и стирает изображение, если количество жизней равно 0"""
+        # возвращает boolean -  нужно ли блок удалить с уровня\
+        # Хороший вопрос. Думаю нет, т.к. может возникнуть ошибка при итерировании по переменной blocks
         self.life_points -= 1
         if self.life_points == 0:
             self.canvas.delete(self.block)
             return True
-        # возвращает boolean -  нужно ли блок удалить с уровня
-        # FIXME: не работает
-        #else:
-        #    self.canvas.coords(self.block, fill=self.dict[self.life_points])
-        #    return False
+        else:
+            if self.life_points > 0:
+                self.canvas.itemconfig(self.block, fill=self.dict[self.life_points])
+            return False
 
     def his_place(self):
         """Выводит координаты блока в формате х, у верхнего левого угла, х, у нижнего правого угла"""

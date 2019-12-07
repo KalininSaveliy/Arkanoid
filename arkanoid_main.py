@@ -44,7 +44,8 @@ from arkanoid_platform import *
 
 # debug_lines = []
 
-class Game():
+
+class Game:
     def __init__(self, tk, width, height):
         self.tk = tk
         self.width = width
@@ -202,7 +203,7 @@ class Game():
     # we need to define level reference system
     def start_new_game(self, event):
         self.platform = Platform(self.canvas, self.width, self.height)
-        self.blocks = create_check_level(self.canvas, self.width, self.height)
+        self.blocks = create_check_level_2(self.canvas, self.width, self.height)
         self.ball = Ball(self.canvas, self.platform.x , self.platform.y - 20, 5, 10)
         self.root.bind('<Key>', self.platform.move_platform)
         self.show_score()
