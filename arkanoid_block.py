@@ -9,11 +9,11 @@
 
 
 class Block:
+    length = 50
+    thickness = 20
 
     def __init__(self, canvas, x, y, life_points):
         self.canvas = canvas
-        self.length = 30  # длина блока
-        self.thickness = 10  # толщина блока
         self.x = x  # координата верхнего левого угла по оси х
         self.y = y  # координата верхнего левого угла по оси у
 
