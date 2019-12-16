@@ -8,40 +8,6 @@ from arkanoid_ball import *
 from arkanoid_platform import *
 
 
-# bind_id = None
-# # создаем окно для игры
-# window_width = 800
-# window_height = 600
-# root = tkinter.Tk()
-# canvas = tkinter.Canvas(root, width=window_width, height=window_height, bg="black")
-# canvas.pack(side=tkinter.TOP)
-# is_running = False
-
-# score = 0
-# score_element = canvas.create_text(window_width / 20, window_height / 24, text='Score: ' + str(score), fill='black')
-
-# def update_score(value):
-#     score_element
-
-# def main():
-#     root.bind('<Double-Button-1>', new_game)  # запуск игры двойным щелчком
-#     root.mainloop()
-
-
-# def new_game(event):
-#     global is_running
-#     if is_running:
-#         return
-#     is_running = True
-#     score = 0
-#     text_score = canvas.create_text(window_width/20, window_height/24,
-#                                     text='Score: ' + str(score), fill='white')
-#     platform = Platform(canvas, window_width, window_height)
-#     # создание чек-уровня, в переменную blocks записываються данные о блоках
-#     blocks = create_check_level(canvas, window_width, window_height)
-#     root.bind('<Key>', platform.move_platform)
-# debug_lines = []
-
 
 class Game:
 
@@ -54,8 +20,18 @@ class Game:
         self.canvas = tk.Canvas(self.root, width=self.width, height=self.height, bg="black")
         self.canvas.pack(side=tk.TOP)
 
+        # bottom buttons
+        self.menu_frame = tk.Frame(self.root, width=self.width)
+        self.menu_frame.pack(side = self.tk.BOTTOM)
+
+        self.start_button = tk.Button(self.menu_frame, text="Start New Game!", command = self.start_handler, width = 60, height = 20)
+        self.exit_button  = tk.Button(self.menu_frame, text="Exit!", command = self.exit_handler, width = 60, height = 20)
+        self.start_button.pack(side = self.tk.LEFT)
+        self.exit_button.pack(side = self.tk.LEFT)
+
         self.background_color = "black"
         self.score_color = "white"
+        self.lifes_color = "white"
 
         # collision
         self.last_x = 0
@@ -68,11 +44,35 @@ class Game:
         self.score_element = self.canvas.create_text(self.width / 20, self.height / 24,
                                                      text="Score: " + str(self.current_score), fill="black")
 
+        self.congrats_element = self.canvas.create_text(self.width / 2, self.height / 2, text="Congratulations! Try beat next one!")
+        self.gameover_element = self.canvas.create_text(self.width / 2, self.height / 2, text="Opss... Just give it a try. :)")
+        self.current_lifes = 3
+        self.max_lifes = 3
+        self.lifes_element = self.canvas.create_text(self.width - self.width / 20, self.height / 24, fill="black")
+
+        self.need_stop_loop = False
+        self.current_level = 0
+        self.need_load_level = 0
+
+        self.platform = None
+        self.blocks = []
+        self.ball = None
+
+        self.after_id = []
+
         # draw start screen
-        self.root.bind("<Double-Button-1>", self.start_new_game)
+        # self.root.bind("<Double-Button-1>", self.start_new_game)
         # self.root.unbind("<Double-Button-1>")
         # FiX ME: unbind херово работает
         self.root.mainloop()
+
+    def start_handler(self):
+        self.need_load_level = 0
+        self.start_new_game()
+        self.current_level = 0
+
+    def exit_handler(self):
+        self.root.delete("all")
 
     # b->r - ray, f-s - segment
     def is_cross (self, bx, by, rx, ry, fx, fy, sx, sy):
@@ -116,6 +116,8 @@ class Game:
         return False
 
     def gamecycle (self):
+        if self.need_stop_loop:
+            return True
         # global debug_lines
         # for l in debug_lines:
         #     (self.canvas).delete(l)
@@ -177,33 +179,102 @@ class Game:
             if self.was_block:
                 self.on_block_hit(self.last_block)
 
-        self.ball.move()
-        # debug_lines.append(self.canvas.create_line(self.ball.x, self.ball.y, self.ball.x + self.ball.dx, self.ball.y + self.ball.dy, fill="#fff000"))
+        if self.ball.x > self.width or self.ball.x < 0 or self.ball.y > self.height or self.ball.y < 0:
+            self.need_load_level = self.current_level
+            self.start_new_game()
 
-        self.root.after(16, self.gamecycle)
+        self.ball.move()
+
+        # print(self.ball.x, self.ball.y, self.ball.dx, self.ball.dy)
+
+        # (self.canvas.create_line(self.ball.x, self.ball.y, self.ball.x + self.ball.dx, self.ball.y + self.ball.dy, fill="#fff000"))
+
+        self.after_id.append(self.root.after(32, self.gamecycle))
 
     def hide_score (self):
         self.canvas.itemconfig(self.score_element, fill=self.background_color)
 
     def show_score (self):
         self.canvas.itemconfig(self.score_element, fill=self.score_color, text="Score: " + str(self.current_score))
+    
+    def update_lifes(self):
+        self.canvas.itemconfig(self.lifes_element, fill=self.lifes_color, text="Lives: " + str(self.current_lifes))
+
+    def hide_lifes(self):
+        self.canvas.itemconfig(self.lifes_element, fill=self.background_color)
+
+    def show_game_over(self):
+        self.canvas.itemconfig(self.gameover_element, fill="white")
+
+    def hide_game_over(self):
+        self.canvas.itemconfig(self.gameover_element, fill="black")
+
+    def show_congrats(self):
+                self.canvas.itemconfig(self.congrats_element, fill="white")
+
+    def hide_congrats(self):
+        self.canvas.itemconfig(self.congrats_element, fill="black")
+
+    def on_game_over(self):
+        self.show_game_over()
+        time.sleep(2)
+        self.hide_game_over()
+        self.need_load_level = 1
+        self.start_new_game()
+        self.current_level = 1
+        self.current_lifes = self.max_lifes
+        self.high_score = self.current_score
+        self.current_score = 0
 
     def on_floor_hit (self):
-        return False
+        self.current_lifes -= 1
+        if self.current_lifes >= 0:
+            self.update_lifes()
+        else:
+            self.on_game_over()
 
     def on_block_hit (self, block):
-        self.current_score += 1
+        if self.blocks[block].life_points > -1:
+            self.current_score += 1
+            if self.blocks[block].hit():
+                del self.blocks[block]
         self.show_score()
-        if self.blocks[block].hit():
-            del self.blocks[block]
+
+        if len(self.blocks) == 0:
+            self.show_congrats()
+            time.sleep(1)
+            self.hide_congrats()
+            self.need_load_level = self.current_level + 1
+            self.start_new_game()
+            self.current_level = self.current_level + 1
+
 
     # we need to define level reference system
-    def start_new_game (self, event):
+    def start_new_game (self):
+        for job in self.after_id:
+            self.root.after_cancel(job)
+        self.current_lifes = self.max_lifes
+        # print(self.platform)
+        if self.platform:
+# it doesn't work at all. check arkanoid_platform for more information
+#            print("was call start new _game")
+#            del self.platform
+#           print("was del call")
+            self.platform.destroy()
         self.platform = Platform(self.canvas, self.width, self.height)
-        self.blocks = create_check_level_1(self.canvas, self.width, self.height)
+        
+        if (len(self.blocks)):
+            for b in self.blocks:
+                del b
+        self.blocks = load_level(self.canvas, self.width, self.height, self.need_load_level)
+        
+        if self.ball:
+            del self.ball
         self.ball = Ball(self.canvas, self.platform.x, self.platform.y - 20, 5, 10)
+
         self.root.bind('<Key>', self.platform.move_platform)
         self.show_score()
+        self.update_lifes()
         self.gamecycle()
 
 

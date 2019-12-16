@@ -27,6 +27,10 @@ class Block:
         self.block = self.canvas.create_rectangle(self.x, self.y, self.x + self.length,
                                                   self.y + self.thickness, fill=color)
 
+    def __del__(self):
+        self.canvas.delete(self.block)
+
+
     def hit(self):
         """Уменьшает количество жизней, меняет цвет блока и стирает изображение, если количество жизней равно 0"""
         # возвращает boolean -  нужно ли блок удалить с уровня\

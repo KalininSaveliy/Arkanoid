@@ -24,9 +24,10 @@ def count_of_blocks(window_width, window_height):
 
 """Первые два тестовых уровня рассчитаны на размеры окна 800х600  !!!"""
 
-
-def create_check_level_1(canvas, window_width, window_height):
-    """Основной проверочный уровень"""
+def load_level(canvas, window_width, window_height, id):
+  if id == 0:
+    return [Block(canvas, 100, 100, 1)]
+  if id == 1:
     blocks = []
     for i in range(25):
         for j in range(10):
@@ -36,10 +37,8 @@ def create_check_level_1(canvas, window_width, window_height):
             if j == 0:
                 life = -1
             blocks.append(Block(canvas, 25 + i * 30, 50 + j * 11, life))
-    return blocks
-
-
-def create_check_level_2(canvas, windows_width, window_height):
+    return blocks 
+  elif id == 2:
     """Проверяет изменение жизней
         Поменяй переменную life, чтобы проверить разные случаи"""
     blocks = []
@@ -48,8 +47,7 @@ def create_check_level_2(canvas, windows_width, window_height):
         blocks.append(Block(canvas, 25 + i * 30, 200, life))
     return blocks
 
-
-def create_level_1(canvas, window_width, window_height):
+  else:
     """Пирамидка вершиной вниз"""
     blocks = []
     count_in_line, dl, count_in_column = count_of_blocks(window_width, window_height)  # см подробности в самой функции

@@ -13,9 +13,11 @@ class Ball:
         self.r = r
 
 
-        self.dx    = randint(1, max_speed * 100 - 1 ) / 100
+        self.dx    = randint(1, max_speed - 1)
         self.dy    = - (max_speed ** 2 - self.dx ** 2) ** 0.5
         self.v = (self.dx ** 2 + self.dy ** 2) ** 0.5
+
+        print(self.dx, self.dy, self.v)
 
         # canvas drawing
         self.ball  = canvas.create_oval(self.x - self.r, self.y - self.r, self.x + self.r, self.y + self.r)
@@ -23,6 +25,8 @@ class Ball:
         self.canvas.itemconfig(self.ball, fill=self.color)
         #canv.addtag_withtag("ball", self.ball) # не шарю
 
+    def __del__(self):
+        self.canvas.delete(self.ball)
 
 
 

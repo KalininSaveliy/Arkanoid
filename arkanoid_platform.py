@@ -36,6 +36,21 @@ class Platform:
                                             self.x + self.length / 2, self.y + self.thickness / 2,
                                             fill=self.color)]
 
+    # WTF IDK WHY IT'S NOT WORKING? I mean that in block and ball all stuff work pretty nice but when i call that nothing is happen
+    # print before and after work but inside not
+    # check arkanoid_main start_new_game func
+    # def __del__(self):
+    #     print("was executed")
+    #    self.canvas.delete(self.platform[0])
+    #    self.canvas.delete(self.platform[1])
+    #    self.canvas.delete(self.platform[2])
+
+    def destroy(self):
+        self.canvas.delete(self.platform[0])
+        self.canvas.delete(self.platform[1])
+        self.canvas.delete(self.platform[2])
+
+
     def centre(self):
         """Выводит координаты в формате: х центра платформы и у его верхней грани"""
         return self.x, self.y - self.thickness, self.length + self.thickness
