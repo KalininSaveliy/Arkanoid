@@ -240,11 +240,14 @@ class Game:
                 del self.blocks[block]
         self.show_score()
 
-        if len(self.blocks) == 0:
+        live_blocks = 0
+        for i in self.blocks:
+            live_blocks += i.life_points
+        if live_blocks <= 0:
             self.show_congrats()
             time.sleep(1)
             self.hide_congrats()
-            self.need_load_level = self.current_level + 1
+            self.need_load_level = self.current_level + 2
             self.start_new_game()
             self.current_level = self.current_level + 1
 

@@ -10,7 +10,7 @@
 class Platform:
 
     def __init__(self, canvas, window_width, window_height):
-        self.length = 70  # длина платформы
+        self.length = 100  # длина платформы
         self.thickness = 7  # толщина платформы
         self.color = 'blue'
 

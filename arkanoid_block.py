@@ -9,8 +9,8 @@
 
 
 class Block:
-    length = 50
-    thickness = 20
+    length = 35
+    thickness = 15
 
     def __init__(self, canvas, x, y, life_points):
         self.canvas = canvas
